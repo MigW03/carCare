@@ -8,13 +8,10 @@ import {
   StatusBar
 } from 'react-native'
 
-import Header from '../components/Header'
-
-export default function Main( {navigation}) {
+export default function CarProfile() {
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor='#FFF' barStyle='dark-content' />
-      <Header/>
+      <Text>CarProfile</Text>
     </View>
   )
 }
@@ -22,6 +19,7 @@ export default function Main( {navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF'
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
