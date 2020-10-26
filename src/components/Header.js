@@ -12,7 +12,7 @@ import {
 import ImagePicker from 'react-native-image-picker'
 import AsyncStorage from '@react-native-community/async-storage'
 
-export default function Header() {
+export default function Header(props) {
   const [imageUri, setImageUri] = useState('')
   let imgOptions = {
     title: 'Escolha a imagem',
@@ -24,6 +24,17 @@ export default function Header() {
   }, [])
 
   function getImage() {
+    Alert.alert(
+      'Alterar imagem',
+      'Você deseja alterar a imagem do seu veículo?',
+      [
+        {text: 'Não'},
+        { text: 'Sim', onPress: selectImage}
+      ]
+    )
+  }
+  
+  function selectImage() {
     ImagePicker.launchImageLibrary(imgOptions, async res => {
       setImageUri(res.uri)
       await AsyncStorage.setItem('imageUri', res.uri)
@@ -48,7 +59,7 @@ export default function Header() {
         <Text style={styles.carDataText}>Idea 2014/2015</Text>
         <Text style={styles.carDataText}>Branca</Text>
       </View>
-      <TouchableOpacity style={styles.touch}>
+      <TouchableOpacity style={styles.touch} onPress={props.headerPress}>
         <Text style={styles.touchText}>Mais dados</Text>
       </TouchableOpacity>
     </View>
@@ -62,11 +73,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fdfdfd',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    padding: 6
   },
   imageButton: {},
   carImage: {
     height: '85%',
+    borderRadius: 12,
     aspectRatio: 1,
     backgroundColor: '#898989'
   },
