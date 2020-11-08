@@ -1,29 +1,25 @@
-import React, { useState } from 'react'
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
+  ToastAndroid,
   View,
-  ToastAndroid
-} from 'react-native'
+  TouchableWithoutFeedback,
+} from 'react-native';
 
 export default function DataDisplayView(props) {
-
   function toastMessage() {
-    return (
-      ToastAndroid.show(
-        'Teste',
-        ToastAndroid.SHORT
-      )
-    )
+    return ToastAndroid.show(props.toast, ToastAndroid.LONG);
   }
 
   return (
-    //Tentar trocar por um TouchableWithoutFeedback
-    <View style={styles.container} onPress={() => toastMessage()}> 
-      <Text style={styles.title}>{props.title}</Text>
-      <Text style={styles.date}>{props.date}</Text>
-    </View>
-  )
+    <TouchableWithoutFeedback onPress={() => toastMessage()}>
+      <View style={styles.container}>
+        <Text style={styles.title}>{props.title}</Text>
+        <Text style={styles.date}>{props.date}</Text>
+      </View>
+    </TouchableWithoutFeedback>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -38,13 +34,12 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: '#333333',
-    borderRadius: 14
+    borderRadius: 14,
   },
   title: {
-    fontSize: 16
+    fontSize: 16,
   },
   date: {
-    fontSize: 16
-
-  }
-})
+    fontSize: 16,
+  },
+});

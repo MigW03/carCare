@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,53 +7,67 @@ import {
   Alert,
   Image,
   StatusBar,
-} from 'react-native'
+  ToastAndroid,
+} from 'react-native';
 
-import ImagePicker from 'react-native-image-picker'
-import AsyncStorage from '@react-native-community/async-storage'
+import ImagePicker from 'react-native-image-picker';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default function Header(props) {
-  const [imageUri, setImageUri] = useState('')
+  const [imageUri, setImageUri] = useState('');
   let imgOptions = {
     title: 'Escolha a imagem',
-    
-  }
+  };
 
   useEffect(() => {
-    loadImage()
-  }, [])
+    loadImage();
+  }, []);
 
   function getImage() {
     Alert.alert(
       'Alterar imagem',
       'Você deseja alterar a imagem do seu veículo?',
       [
+        {text: 'Deletar imagem', onPress: clearImage},
         {text: 'Não'},
-        { text: 'Sim', onPress: selectImage}
-      ]
-    )
+        {text: 'Sim', onPress: selectImage},
+      ],
+      {cancelable: true},
+    );
   }
-  
+
+  async function clearImage() {
+    await AsyncStorage.setItem('imageUri', '');
+    ToastAndroid.show(
+      'A imagem não aparecerá na próxima vez que abrir o aplicativo',
+      ToastAndroid.LONG,
+    );
+  }
+
   function selectImage() {
-    ImagePicker.launchImageLibrary(imgOptions, async res => {
-      setImageUri(res.uri)
-      await AsyncStorage.setItem('imageUri', res.uri)
-    })
+    ImagePicker.launchImageLibrary(imgOptions, async (res) => {
+      setImageUri(res.uri);
+      await AsyncStorage.setItem('imageUri', res.uri);
+    });
   }
 
   async function loadImage() {
-    let imagePath = await AsyncStorage.getItem('imageUri')
+    let imagePath = await AsyncStorage.getItem('imageUri');
 
     if (imagePath) {
-      setImageUri(imagePath)
-    } else {
+      setImageUri(imagePath);
     }
   }
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.imageButton} onPress={() => getImage()}>
-        <Image style={styles.carImage} source={{uri: imageUri}}/>
+        <Image
+          style={styles.carImage}
+          source={
+            imageUri ? {uri: imageUri} : require('../assets/camera_dummy.png')
+          }
+        />
       </TouchableOpacity>
       <View style={styles.carDataView}>
         <Text style={styles.carDataText}>Idea 2014/2015</Text>
@@ -63,25 +77,25 @@ export default function Header(props) {
         <Text style={styles.touchText}>Mais dados</Text>
       </TouchableOpacity>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '15%',
-    backgroundColor: '#fdfdfd',
+    // backgroundColor: '#fdfdfd',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    padding: 6
+    padding: 6,
   },
   imageButton: {},
   carImage: {
     height: '85%',
     borderRadius: 12,
     aspectRatio: 1,
-    backgroundColor: '#898989'
+    backgroundColor: '#898989',
   },
   carDataView: {
     height: '100%',
@@ -92,12 +106,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 24,
     padding: 8,
-    paddingHorizontal: 14
+    paddingHorizontal: 14,
   },
   touchText: {
     fontSize: 15,
   },
   carDataText: {
-    fontSize: 16
-  }
-})
+    fontSize: 16,
+  },
+});
