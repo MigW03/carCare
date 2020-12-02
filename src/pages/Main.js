@@ -16,6 +16,9 @@ import OilIcon from 'react-native-vector-icons/Entypo'; //Gota de óleo => drop
 import GearIcon from 'react-native-vector-icons/FontAwesome'; //Engrenagens => gears
 import FuelIcon from 'react-native-vector-icons/MaterialCommunityIcons'; //Abastecimento => oil
 
+import PushNotification from 'react-native-push-notifications';
+import AsyncStorage from '@react-native-community/async-storage';
+
 export default function Main({navigation}) {
   const [list, setList] = useState([
     {title: 'teste 1', key: '1'},
@@ -23,6 +26,34 @@ export default function Main({navigation}) {
     {title: 'teste 3', key: '3'},
     {title: 'teste 4', key: '4'},
   ]);
+
+  useEffect(() => {
+    checkForCar();
+  }, []);
+
+  async function checkForCar() {
+    let data = await AsyncStorage.getItem('carProfile')
+      .then(() => {
+        if (!data) {
+          console.log('carro nao existe');
+          navigation.navigate('CarSettings');
+        }
+      })
+      .catch((err) => {
+        console.log(`Houve um erro ao carregar os dados do carro: ${err}`);
+      });
+  }
+
+  function tryToNotify() {
+    // PushNotification.localNotification({
+    //   message: 'Teste 1',
+    //   color: 'blue',
+    //   title: 'CarCare - o seu amigo automotivo',
+    //   autoCancel: true,
+    // });
+
+    console.log('notificacao criada');
+  }
 
   return (
     <View style={styles.container}>
@@ -52,7 +83,7 @@ export default function Main({navigation}) {
 
         <ActionButton.Item
           title="Nova Revisão"
-          onPress={() => console.log('revisao')}
+          onPress={() => tryToNotify()}
           size={50}>
           <GearIcon name="gears" size={24} color="#FFF" />
         </ActionButton.Item>

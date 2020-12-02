@@ -7,6 +7,7 @@ import {
   Alert,
   Image,
   StatusBar,
+  // AsyncStorage,
   ToastAndroid,
 } from 'react-native';
 
