@@ -8,7 +8,8 @@ import {
   Alert,
   StatusBar,
 } from 'react-native';
-import * as Animatable from 'react-native-animatable';
+
+import StepContainer from './steps/StepContainer';
 
 export default function CarSettings() {
   const [brand, setBrand] = useState('');
@@ -17,92 +18,29 @@ export default function CarSettings() {
   const [wheel, setWheel] = useState('');
   const [fuel, setFuel] = useState('');
   const [color, setColor] = useState('');
-  const [firstSet, setFirstSet] = useState(false);
-
-  const [animationName, setAnimationName] = useState('slideInRight');
+  const [stepsPage, setStepsPage] = useState(1);
 
   function saveData() {
-    setAnimationName('fadeOut');
+    // setAnimationName('fadeOut');
+    console.log(brand);
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.settingsTitle}>coloque os dados do seu carro</Text>
-      <Animatable.View
-        animation={animationName}
-        duration={1000}
-        style={styles.animatedInput}>
-        <TextInput
-          placeholder="Marca"
-          value={brand}
-          style={[styles.input]}
-          selectionColor="#353535"
-          onChangeText={(text) => setBrand(text)}
+      <Text style={styles.settingsTitle}>Coloque os dados do seu carro</Text>
+      <View style={styles.stepView}>
+        <StepContainer
+          page={stepsPage}
+          brand={{value: brand, func: setBrand}}
+          model={{value: model, func: setModel}}
+          year={{value: year, func: setYear}}
+          wheel={{value: wheel, func: setWheel}}
+          fuel={{value: fuel, func: setFuel}}
+          color={{value: color, func: setColor}}
+          firstTouch={() => setStepsPage(2)}
+          secondTouch={() => alert('salvou os dados')}
         />
-      </Animatable.View>
-      <Animatable.View
-        animation={animationName}
-        duration={1000}
-        style={styles.animatedInput}>
-        <TextInput
-          placeholder="Modelo"
-          value={model}
-          style={[styles.input]}
-          selectionColor="#353535"
-          onChangeText={(text) => setModel(text)}
-        />
-      </Animatable.View>
-      <Animatable.View
-        animation={animationName}
-        duration={1000}
-        style={styles.animatedInput}>
-        <TextInput
-          placeholder="Ano de fabricação"
-          value={year}
-          style={[styles.input]}
-          selectionColor="#353535"
-          onChangeText={(text) => setYear(text)}
-        />
-      </Animatable.View>
-      <Animatable.View
-        animation={animationName}
-        duration={300}
-        style={styles.animatedInput}>
-        <TextInput
-          placeholder="Tamanho da roda"
-          value={wheel}
-          onChangeText={(text) => setWheel(text)}
-          selectionColor="#353535"
-          style={[styles.input]}
-        />
-      </Animatable.View>
-      <Animatable.View
-        animation={animationName}
-        duration={300}
-        style={styles.animatedInput}>
-        <TextInput
-          placeholder="Tipo de combustível"
-          value={fuel}
-          onChangeText={(text) => setFuel(text)}
-          style={[styles.input]}
-          selectionColor="#353535"
-        />
-      </Animatable.View>
-      <Animatable.View
-        animation={animationName}
-        duration={300}
-        style={styles.animatedInput}>
-        <TextInput
-          placeholder="Cor"
-          value={color}
-          onChangeText={(text) => setColor(text)}
-          style={[styles.input]}
-          selectionColor="#353535"
-        />
-      </Animatable.View>
-      <TouchableOpacity onPress={saveData} style={styles.touch}>
-        <Text style={styles.touchText}>Salvar dados</Text>
-      </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -111,20 +49,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    // justifyContent: 'center',
   },
-  animatedInput: {
-    width: '75%',
+  settingsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 12,
   },
-  input: {
-    // width: '75%',
-    borderWidth: 1,
-    borderColor: '#404040',
-    borderRadius: 12,
-    marginTop: 8,
-    padding: 8,
-    paddingLeft: 14,
+  stepView: {
+    marginTop: 25,
+    width: '100%',
+    height: '40%',
+    minHeight: '30%',
   },
-  touch: {},
-  touchText: {},
 });
