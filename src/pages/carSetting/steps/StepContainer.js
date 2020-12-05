@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react';
-import {View, TextInput} from 'react-native';
+import React from 'react';
 
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';

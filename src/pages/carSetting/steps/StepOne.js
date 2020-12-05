@@ -1,14 +1,11 @@
-import {useLinkProps} from '@react-navigation/native';
-import React, {useState, useEffec} from 'react';
+import React, {useState} from 'react';
 
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Alert,
   Text,
-  Keyboard,
 } from 'react-native';
 
 import * as Animatable from 'react-native-animatable';

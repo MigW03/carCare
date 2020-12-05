@@ -1,17 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  StatusBar,
-} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, View, Keyboard, Alert} from 'react-native';
 
 import StepContainer from './steps/StepContainer';
 
-export default function CarSettings() {
+export default function CarSettings({navigation}) {
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [year, setYear] = useState('');
@@ -20,9 +13,39 @@ export default function CarSettings() {
   const [color, setColor] = useState('');
   const [stepsPage, setStepsPage] = useState(1);
 
-  function saveData() {
-    // setAnimationName('fadeOut');
-    console.log(brand);
+  useEffect(() => {
+    loadCarData();
+  }, []);
+
+  async function loadCarData() {
+    let data = await AsyncStorage.getItem('carProfile');
+
+    if (data) navigation.navigate('Main');
+  }
+
+  async function saveData() {
+    Keyboard.dismiss();
+    let carProfile = {
+      brand: brand,
+      model: model,
+      year: year,
+      wheel: wheel,
+      fuel: fuel,
+      color: color,
+    };
+    console.log(carProfile, typeof carProfile);
+
+    await AsyncStorage.setItem('carProfile', JSON.stringify(carProfile))
+      .then(() => {
+        navigation.navigate('Main');
+      })
+      .catch((err) => {
+        console.log(`Houve um problema: ${err}`);
+        Alert.alert(
+          'Opps!',
+          'Houve um problema ao salvar seus dados, tente novamente mais tarde.',
+        );
+      });
   }
 
   return (
@@ -38,7 +61,7 @@ export default function CarSettings() {
           fuel={{value: fuel, func: setFuel}}
           color={{value: color, func: setColor}}
           firstTouch={() => setStepsPage(2)}
-          secondTouch={() => alert('salvou os dados')}
+          secondTouch={() => saveData()}
         />
       </View>
     </View>

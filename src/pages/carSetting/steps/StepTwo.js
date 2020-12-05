@@ -1,11 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
-  Keyboard,
   TextInput,
 } from 'react-native';
 
@@ -25,6 +23,7 @@ export default function StepTwo(props) {
           value={props.wheel.value}
           onChangeText={(text) => props.wheel.func(text)}
           selectionColor="#353535"
+          autoFocus
           style={styles.input}
         />
       </Animatable.View>
@@ -53,7 +52,10 @@ export default function StepTwo(props) {
         />
       </Animatable.View>
 
-      <Animatable.View animation={animationName} duration={1600}>
+      <Animatable.View
+        animation={animationName}
+        style={styles.animatedButton}
+        duration={1600}>
         <TouchableOpacity style={styles.touch} onPress={props.secondTouch}>
           <Text style={styles.touchText}>Finalizar</Text>
         </TouchableOpacity>
@@ -78,5 +80,22 @@ const styles = StyleSheet.create({
     marginTop: 8,
     padding: 8,
     paddingLeft: 14,
+    fontSize: 16,
+  },
+  animatedButton: {
+    width: '50%',
+  },
+  touch: {
+    backgroundColor: '#da9021',
+    borderRadius: 14,
+    padding: 8,
+    marginTop: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  touchText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#212121',
   },
 });

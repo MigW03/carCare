@@ -20,6 +20,7 @@ import PushNotification from 'react-native-push-notifications';
 import AsyncStorage from '@react-native-community/async-storage';
 
 export default function Main({navigation}) {
+  const [carData, setCarData] = useState({});
   const [list, setList] = useState([
     {title: 'teste 1', key: '1'},
     {title: 'teste 2', key: '2'},
@@ -32,16 +33,9 @@ export default function Main({navigation}) {
   }, []);
 
   async function checkForCar() {
-    let data = await AsyncStorage.getItem('carProfile')
-      .then(() => {
-        if (!data) {
-          console.log('carro nao existe');
-          navigation.navigate('CarSettings');
-        }
-      })
-      .catch((err) => {
-        console.log(`Houve um erro ao carregar os dados do carro: ${err}`);
-      });
+    let data = await AsyncStorage.getItem('carProfile');
+
+    setCarData(JSON.parse(data));
   }
 
   function tryToNotify() {

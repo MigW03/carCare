@@ -15,6 +15,8 @@ import ImagePicker from 'react-native-image-picker';
 import AsyncStorage from '@react-native-community/async-storage';
 
 export default function Header(props) {
+  const [carData, setCarData] = useState({});
+
   const [imageUri, setImageUri] = useState('');
   let imgOptions = {
     title: 'Escolha a imagem',
@@ -22,7 +24,14 @@ export default function Header(props) {
 
   useEffect(() => {
     loadImage();
+    loadCarData();
   }, []);
+
+  async function loadCarData() {
+    let data = await AsyncStorage.getItem('carProfile');
+
+    setCarData(JSON.parse(data));
+  }
 
   function getImage() {
     Alert.alert(
@@ -71,8 +80,10 @@ export default function Header(props) {
         />
       </TouchableOpacity>
       <View style={styles.carDataView}>
-        <Text style={styles.carDataText}>Idea 2014/2015</Text>
-        <Text style={styles.carDataText}>Branca</Text>
+        <Text style={styles.carDataText}>
+          {carData.model} {carData.year}
+        </Text>
+        <Text style={styles.carDataText}>{carData.color}</Text>
       </View>
       <TouchableOpacity style={styles.touch} onPress={props.headerPress}>
         <Text style={styles.touchText}>Mais dados</Text>
@@ -114,5 +125,7 @@ const styles = StyleSheet.create({
   },
   carDataText: {
     fontSize: 16,
+    alignSelf: 'flex-start',
+    width: '100%',
   },
 });
