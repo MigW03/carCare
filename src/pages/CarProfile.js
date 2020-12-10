@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-community/async-storage';
 import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
@@ -7,19 +6,53 @@ import {
   TouchableOpacity,
   Alert,
   Image,
+  ToastAndroid,
   StatusBar,
 } from 'react-native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-community/async-storage';
+import ImagePicker from 'react-native-image-picker';
 
 export default function CarProfile({navigation}) {
   const [imageUri, setImageUri] = useState('');
   const [carData, setCarData] = useState({});
+  let imgOptions = {
+    title: 'Escolha a imagem',
+  };
 
   useEffect(() => {
     getCarData();
     loadImage();
   }, []);
+
+  function getImage() {
+    Alert.alert(
+      'Alterar imagem',
+      'Você deseja alterar a imagem do seu veículo?',
+      [
+        {text: 'Deletar imagem', onPress: clearImage},
+        {text: 'Não'},
+        {text: 'Sim', onPress: selectImage},
+      ],
+      {cancelable: true},
+    );
+  }
+
+  async function clearImage() {
+    await AsyncStorage.setItem('imageUri', '');
+    ToastAndroid.show(
+      'A imagem não aparecerá na próxima vez que abrir o aplicativo',
+      ToastAndroid.LONG,
+    );
+  }
+
+  function selectImage() {
+    ImagePicker.launchImageLibrary(imgOptions, async (res) => {
+      setImageUri(res.uri);
+      await AsyncStorage.setItem('imageUri', res.uri);
+    });
+  }
 
   async function getCarData() {
     const carData = JSON.parse(await AsyncStorage.getItem('carProfile'));
@@ -43,12 +76,14 @@ export default function CarProfile({navigation}) {
         <Text style={styles.goBackText}>Voltar</Text>
       </TouchableOpacity>
 
-      <Image
-        style={styles.image}
-        source={
-          imageUri ? {uri: imageUri} : require('../assets/camera_dummy.png')
-        }
-      />
+      <TouchableOpacity style={styles.imageButton} onPress={() => getImage()}>
+        <Image
+          style={styles.image}
+          source={
+            imageUri ? {uri: imageUri} : require('../assets/camera_dummy.png')
+          }
+        />
+      </TouchableOpacity>
       <Text
         style={
           styles.carName
