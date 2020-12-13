@@ -35,6 +35,7 @@ export default function Main({navigation}) {
   const [date, setDate] = useState();
   const [liters, setLiters] = useState();
   const [price, setPrice] = useState();
+  const [average, setAverage] = useState('?');
 
   useEffect(() => {
     checkForCar();
@@ -52,6 +53,7 @@ export default function Main({navigation}) {
       const retrievedData = await AsyncStorage.getItem('fuelList');
 
       setList(JSON.parse(retrievedData) || []);
+      calculateAverage();
     } catch (error) {
       console.log(`erro de dados${error}`);
       Alert.alert(
@@ -88,6 +90,8 @@ export default function Main({navigation}) {
       Keyboard.dismiss();
       resetStates();
       setModalOpen(false);
+
+      calculateAverage();
     } else {
       Alert.alert(
         'Campos incompletos',
@@ -109,6 +113,7 @@ export default function Main({navigation}) {
     setList(newList);
     saveToStorage(newList);
     ToastAndroid.show('Abastecimento removido com sucesso', ToastAndroid.SHORT);
+    calculateAverage();
   }
 
   async function saveToStorage(itemToSave) {
@@ -119,6 +124,23 @@ export default function Main({navigation}) {
         'Erro ao salvar',
         'Não foi possível salvar os dados, por favor tente novamente',
       );
+    }
+  }
+
+  function calculateAverage() {
+    if (list && list.length >= 2) {
+      let newest = fixNumber(list[0].km.toString());
+      let previous = fixNumber(list[1].km.toString());
+      let fuel = fixNumber(list[0].volume.toString());
+
+      let consumption = ((newest - previous) / fuel).toFixed(3);
+
+      setAverage(`${consumption} km/L`);
+      console.log(consumption);
+      console.log('cm dados');
+    } else {
+      console.log('Sem dados suficientes');
+      setAverage('?');
     }
   }
 
@@ -138,10 +160,7 @@ export default function Main({navigation}) {
       /> */}
 
       <Text style={styles.fuelDataTitle}>Abastecimentos</Text>
-      <Text style={styles.carEfficency}>
-        Consumo médio do carro: (distancia viajada entre abastecimentos/litros
-        abastecidos)
-      </Text>
+      <Text style={styles.carEfficency}>Consumo médio: {average}</Text>
 
       <FlatList
         data={list}
