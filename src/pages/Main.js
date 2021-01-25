@@ -19,6 +19,7 @@ import Header from '../components/Header';
 import DataDisplay from '../components/DataDisplayView';
 import ListItem from '../components/ListItem';
 import HeaderListComponent from '../components/HeaderListComponent';
+import AverageButton from '../components/AverageButton';
 import ActionButton from 'react-native-action-button';
 import OilIcon from 'react-native-vector-icons/Entypo'; //Gota de óleo => drop
 import GearIcon from 'react-native-vector-icons/FontAwesome'; //Engrenagens => gears
@@ -35,7 +36,9 @@ export default function Main({navigation}) {
   const [date, setDate] = useState();
   const [liters, setLiters] = useState();
   const [price, setPrice] = useState();
-  const [average, setAverage] = useState('?');
+  const [average, setAverage] = useState(
+    <AverageButton onPress={() => calculateAverage(list)} />,
+  );
 
   useEffect(() => {
     checkForCar();
@@ -53,7 +56,7 @@ export default function Main({navigation}) {
       const retrievedData = await AsyncStorage.getItem('fuelList');
 
       setList(JSON.parse(retrievedData) || []);
-      calculateAverage();
+      calculateAverage(JSON.parse(retrievedData) || []);
     } catch (error) {
       console.log(`erro de dados${error}`);
       Alert.alert(
@@ -91,7 +94,7 @@ export default function Main({navigation}) {
       resetStates();
       setModalOpen(false);
 
-      calculateAverage();
+      calculateAverage(list);
     } else {
       Alert.alert(
         'Campos incompletos',
@@ -113,7 +116,7 @@ export default function Main({navigation}) {
     setList(newList);
     saveToStorage(newList);
     ToastAndroid.show('Abastecimento removido com sucesso', ToastAndroid.SHORT);
-    calculateAverage();
+    calculateAverage(newList);
   }
 
   async function saveToStorage(itemToSave) {
@@ -127,20 +130,20 @@ export default function Main({navigation}) {
     }
   }
 
-  function calculateAverage() {
-    if (list && list.length >= 2) {
-      let newest = fixNumber(list[0].km.toString());
-      let previous = fixNumber(list[1].km.toString());
-      let fuel = fixNumber(list[0].volume.toString());
+  function calculateAverage(array) {
+    if (array && array.length >= 2) {
+      let newest = fixNumber(array[0].km.toString());
+      let previous = fixNumber(array[1].km.toString());
+      let fuel = fixNumber(array[0].volume.toString());
 
       let consumption = ((newest - previous) / fuel).toFixed(3);
-
       setAverage(`${consumption} km/L`);
-      console.log(consumption);
-      console.log('cm dados');
     } else {
-      console.log('Sem dados suficientes');
-      setAverage('?');
+      Alert.alert(
+        'Dados insuficientes',
+        'Não foi possível calcular o consumo médio atual de seu veículo, por favor tente novamente mais tarde',
+      );
+      // setAverage('?');
     }
   }
 
@@ -192,7 +195,7 @@ export default function Main({navigation}) {
         onShow={() => {
           let day = new Date().getDate();
           let month = new Date().getMonth();
-          let fulldate = `${day}/${month}`;
+          let fulldate = `${day}/${month + 1}`;
           setDate(fulldate);
         }}>
         <View style={styles.modalContainer}>
@@ -286,10 +289,14 @@ const styles = StyleSheet.create({
     color: '#454545',
   },
   carEfficency: {
+    display: 'flex',
     fontSize: 15,
     marginLeft: 20,
     marginTop: 6,
+    marginBottom: 6,
     color: '#404040',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   list: {
     flex: 1,
