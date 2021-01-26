@@ -136,7 +136,7 @@ export default function Main({navigation}) {
       let previous = fixNumber(array[1].km.toString());
       let fuel = fixNumber(array[0].volume.toString());
 
-      let consumption = ((newest - previous) / fuel).toFixed(3);
+      let consumption = ((newest - previous) / fuel).toFixed(2);
       setAverage(`${consumption} km/L`);
     } else {
       Alert.alert(

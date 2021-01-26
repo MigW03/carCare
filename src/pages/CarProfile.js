@@ -8,6 +8,7 @@ import {
   Image,
   ToastAndroid,
   StatusBar,
+  BackHandler,
 } from 'react-native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -67,14 +68,49 @@ export default function CarProfile({navigation}) {
     }
   }
 
+  function resetData() {
+    Alert.alert(
+      'Redefinir dados',
+      'Tem certeza que deseja redefinir os dados de seu veículo? Essa é uma açõa irreversível!',
+      [
+        {
+          text: 'Sim',
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem('carProfile');
+
+              ToastAndroid.show(
+                'Dados removidos com sucesso, a aplicativo fechará em instantes',
+                ToastAndroid.LONG,
+              );
+              setTimeout(() => BackHandler.exitApp(), 2000);
+            } catch {
+              Alert.alert(
+                'Opps!',
+                'Houve um problema ao deletar seus dados, por favor tente novamente',
+              );
+            }
+          },
+        },
+        {text: 'Cancelar'},
+      ],
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.goBackButton}
-        onPress={() => navigation.navigate('Main')}>
-        <MaterialIcons name="arrow-back-ios" size={24} color="#353535" />
-        <Text style={styles.goBackText}>Voltar</Text>
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.goBackButton}
+          onPress={() => navigation.navigate('Main')}>
+          <MaterialIcons name="arrow-back-ios" size={24} color="#353535" />
+          <Text style={styles.goBackText}>Voltar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.resetTouch} onPress={resetData}>
+          <Text style={styles.resetText}>Redefinir informações</Text>
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity style={styles.imageButton} onPress={() => getImage()}>
         <Image
@@ -107,6 +143,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 8,
+  },
   image: {
     width: 120,
     height: 120,
@@ -125,8 +167,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '20%',
-    marginTop: 8,
-    marginLeft: 8,
     padding: 6,
   },
   goBackText: {
@@ -134,6 +174,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#353535',
   },
+  resetTouch: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#dd0000',
+    padding: 4,
+    paddingHorizontal: 7,
+    // margin: 6,
+  },
+  resetText: {color: '#dd0000'},
   dataTitle: {
     marginLeft: 10,
     fontSize: 18,
